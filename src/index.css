@@ -1,12 +1,11 @@
-body {
-  margin: 0;
-  background: #f7f8fa;
-  font-family: Inter, Arial, sans-serif;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
-button {
-  cursor: pointer;
-}
-input, select {
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }

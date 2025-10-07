@@ -1,129 +1,117 @@
-import React, { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
 import Board from "./components/Board";
-import "./index.css";
 import "./App.css";
 
-const genId = () =>
-  "task-" + Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 6);
-
-const STORAGE_KEY = "dragapp-columns-v1";
-const DARK_KEY = "dragapp-theme";
-
-const initialColumns = {
-  backlog: {
-    id: "backlog",
-    name: "Backlog",
-    color: "bg-blue-100 dark:bg-blue-900/30",
-    items: [
-      { id: genId(), content: "Update landing page" },
-      { id: genId(), content: "Write hero headline" },
-    ],
-  },
-  selected: {
-    id: "selected",
-    name: "Selected",
-    color: "bg-yellow-100 dark:bg-yellow-900/30",
-    items: [{ id: genId(), content: "Design feature card" }],
-  },
-  running: {
-    id: "running",
-    name: "Running",
-    color: "bg-amber-100 dark:bg-amber-900/30",
-    items: [{ id: genId(), content: "Build Kanban UI" }],
-  },
-  evaluating: {
-    id: "evaluating",
-    name: "Evaluating",
-    color: "bg-indigo-100 dark:bg-indigo-900/30",
-    items: [],
-  },
-  live: {
-    id: "live",
-    name: "Live",
-    color: "bg-green-100 dark:bg-green-900/30",
-    items: [{ id: genId(), content: "Project kickoff" }],
-  },
-};
-
-function App() {
-  const [columns, setColumns] = useState(() => {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    return saved ? JSON.parse(saved) : initialColumns;
-  });
-  const [darkMode, setDarkMode] = useState(() => {
-    return localStorage.getItem(DARK_KEY) === "dark";
+export default function App() {
+  const [columns, setColumns] = useState({
+    todo: {
+      name: "To Do",
+      tasks: [
+        { id: 1, title: "Design landing page", desc: "Start wireframe in Figma" },
+        { id: 2, title: "Set up analytics", desc: "Add Google Tag Manager" },
+      ],
+    },
+    progress: {
+      name: "In Progress",
+      tasks: [{ id: 3, title: "Write documentation", desc: "Update README and wiki" }],
+    },
+    done: {
+      name: "Done",
+      tasks: [{ id: 4, title: "Deploy to Vercel", desc: "Live now 🎉" }],
+    },
   });
 
-  useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(columns));
-  }, [columns]);
+  // 🌗 Dark mode setup
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
 
   useEffect(() => {
-    document.documentElement.classList.toggle("dark", darkMode);
-    localStorage.setItem(DARK_KEY, darkMode ? "dark" : "light");
-  }, [darkMode]);
+    if (theme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
-  const addTask = (colId, text) => {
-    if (!text.trim()) return;
-    const newTask = { id: genId(), content: text.trim() };
+  // 🧩 Board logic
+  const addTask = (colId, newTask) => {
     setColumns((prev) => ({
       ...prev,
-      [colId]: { ...prev[colId], items: [...prev[colId].items, newTask] },
+      [colId]: { ...prev[colId], tasks: [...prev[colId].tasks, newTask] },
     }));
   };
 
   const deleteTask = (colId, taskId) => {
     setColumns((prev) => ({
       ...prev,
-      [colId]: { ...prev[colId], items: prev[colId].items.filter((t) => t.id !== taskId) },
+      [colId]: {
+        ...prev[colId],
+        tasks: prev[colId].tasks.filter((t) => t.id !== taskId),
+      },
     }));
   };
 
-  const editTask = (colId, taskId, newContent) => {
+  const editTask = (colId, taskId, updatedTask) => {
     setColumns((prev) => ({
       ...prev,
       [colId]: {
         ...prev[colId],
-        items: prev[colId].items.map((t) =>
-          t.id === taskId ? { ...t, content: newContent } : t
+        tasks: prev[colId].tasks.map((t) =>
+          t.id === taskId ? { ...t, ...updatedTask } : t
         ),
       },
     }));
   };
 
-  const moveTask = (updatedColumns) => setColumns(updatedColumns);
+  const moveTask = (from, to, task) => {
+    setColumns((prev) => {
+      const updated = { ...prev };
+      updated[from].tasks = updated[from].tasks.filter((t) => t.id !== task.id);
+      updated[to].tasks = [...updated[to].tasks, task];
+      return updated;
+    });
+  };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-darkbg transition-colors duration-300 p-6">
-      <header className="max-w-6xl mx-auto mb-8 flex justify-between items-center">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-800 dark:text-gray-100">
-            🚀 DragApp — Kanban Board
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-800 dark:text-gray-100 flex flex-col items-center py-8 px-4 transition-all duration-300">
+      {/* Header */}
+      <header className="w-full max-w-7xl mb-8 flex justify-between items-center flex-wrap gap-4">
+        <div className="text-center flex-1">
+          <h1 className="text-3xl sm:text-4xl font-bold mb-1">
+            DragBoard — Modern Kanban
           </h1>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            Notion-style minimal board with Dark Mode ✨
+          <p className="text-gray-600 dark:text-gray-400 text-sm">
+            Streamline your daily workflow — inspired by Huly, built by Vikram
           </p>
         </div>
 
+        {/* 🌗 Theme Toggle */}
         <button
-          onClick={() => setDarkMode(!darkMode)}
-          className="px-4 py-2 bg-gray-200 dark:bg-gray-700 dark:text-gray-100 text-gray-700 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+          className="px-4 py-2 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
         >
-          {darkMode ? "🌙 Dark" : "☀️ Light"}
+          {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
         </button>
       </header>
 
-      <main className="max-w-6xl mx-auto">
-        <Board
-          columns={columns}
-          addTask={addTask}
-          deleteTask={deleteTask}
-          editTask={editTask}
-          onColumnsChange={moveTask}
-        />
-      </main>
+      {/* Main Content */}
+      <div className="flex flex-col lg:flex-row gap-8 w-full max-w-7xl">
+        {/* Kanban Board */}
+        <main className="flex-1">
+          <Board
+            columns={columns}
+            addTask={addTask}
+            deleteTask={deleteTask}
+            editTask={editTask}
+            onColumnsChange={moveTask}
+          />
+        </main>
+      </div>
+
+      {/* Footer */}
+      <footer className="mt-10 text-center text-xs text-gray-500 dark:text-gray-400">
+        Built with 💙 React + TailwindCSS | © {new Date().getFullYear()} Vikram
+      </footer>
     </div>
   );
 }
-
-export default App;

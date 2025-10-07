@@ -1,50 +1,51 @@
-import React from "react";
 import { DragDropContext } from "@hello-pangea/dnd";
 import Column from "./Column";
+import LiveUpdates from "./LiveUpdates";
 
 export default function Board({ columns, addTask, deleteTask, editTask, onColumnsChange }) {
-  const handleOnDragEnd = (result) => {
+  const handleDragEnd = (result) => {
     const { source, destination } = result;
     if (!destination) return;
-    const sourceId = source.droppableId;
-    const destId = destination.droppableId;
-    const start = columns[sourceId];
-    const end = columns[destId];
 
-    if (sourceId === destId) {
-      const copied = Array.from(start.items);
-      const [moved] = copied.splice(source.index, 1);
-      copied.splice(destination.index, 0, moved);
-      onColumnsChange({ ...columns, [sourceId]: { ...start, items: copied } });
+    // 🧩 Identify source and destination columns
+    const startCol = columns[source.droppableId];
+    const endCol = columns[destination.droppableId];
+
+    // 🟦 Drag within same column
+    if (startCol === endCol) {
+      const updatedTasks = Array.from(startCol.tasks);
+      const [movedTask] = updatedTasks.splice(source.index, 1);
+      updatedTasks.splice(destination.index, 0, movedTask);
+
+      onColumnsChange(source.droppableId, destination.droppableId, movedTask);
       return;
     }
 
-    const startItems = Array.from(start.items);
-    const endItems = Array.from(end.items);
-    const [moved] = startItems.splice(source.index, 1);
-    endItems.splice(destination.index, 0, moved);
+    // 🟩 Drag between different columns
+    const startTasks = Array.from(startCol.tasks);
+    const [movedTask] = startTasks.splice(source.index, 1);
+    const endTasks = Array.from(endCol.tasks);
+    endTasks.splice(destination.index, 0, movedTask);
 
-    onColumnsChange({
-      ...columns,
-      [sourceId]: { ...start, items: startItems },
-      [destId]: { ...end, items: endItems },
-    });
+    onColumnsChange(source.droppableId, destination.droppableId, movedTask);
   };
 
   return (
-    <DragDropContext onDragEnd={handleOnDragEnd}>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
-        {Object.entries(columns).map(([colId, column]) => (
+    <div className="flex gap-6 overflow-x-auto">
+      <DragDropContext onDragEnd={handleDragEnd}>
+        {Object.entries(columns).map(([id, col]) => (
           <Column
-            key={colId}
-            colId={colId}
-            column={column}
+            key={id}
+            colId={id}
+            column={col}
             addTask={addTask}
             deleteTask={deleteTask}
             editTask={editTask}
           />
         ))}
-      </div>
-    </DragDropContext>
+      </DragDropContext>
+
+      <LiveUpdates />
+    </div>
   );
 }

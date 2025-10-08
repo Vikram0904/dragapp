@@ -17,12 +17,12 @@ export default function App() {
     },
     done: {
       name: "Done",
-      tasks: [{ id: 4, title: "Deploy to Vercel", desc: "Live now 🎉" }],
+      tasks: [{ id: 4, title: "Deploy to Netlify", desc: "Live now 🎉" }],
     },
   });
 
-  // 🌗 Dark mode setup
-  const [theme, setTheme] = useState(localStorage.getItem("theme") || "light");
+  // Dark mode setup
+  const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
 
   useEffect(() => {
     if (theme === "dark") {
@@ -33,7 +33,7 @@ export default function App() {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  // 🧩 Board logic
+  // Board logic
   const addTask = (colId, newTask) => {
     setColumns((prev) => ({
       ...prev,
@@ -85,12 +85,12 @@ export default function App() {
           </p>
         </div>
 
-        {/* 🌗 Theme Toggle */}
+        {/* Theme Toggle */}
         <button
-          onClick={() => setTheme(theme === "light" ? "dark" : "light")}
+          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
           className="px-4 py-2 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
         >
-          {theme === "light" ? "🌙 Dark Mode" : "☀️ Light Mode"}
+          {theme === "dark" ? "🌙" : "☀️"}
         </button>
       </header>
 
@@ -110,7 +110,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="mt-10 text-center text-xs text-gray-500 dark:text-gray-400">
-        Built with 💙 React + TailwindCSS | © {new Date().getFullYear()} Vikram
+        Built with 💙 React + TailwindCSS | © {new Date().getFullYear()} DragBoard
       </footer>
     </div>
   );

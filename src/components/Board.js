@@ -7,11 +7,11 @@ export default function Board({ columns, addTask, deleteTask, editTask, onColumn
     const { source, destination } = result;
     if (!destination) return;
 
-    // 🧩 Identify source and destination columns
+    // Identify source and destination columns
     const startCol = columns[source.droppableId];
     const endCol = columns[destination.droppableId];
 
-    // 🟦 Drag within same column
+    // Drag within same column
     if (startCol === endCol) {
       const updatedTasks = Array.from(startCol.tasks);
       const [movedTask] = updatedTasks.splice(source.index, 1);
@@ -21,7 +21,7 @@ export default function Board({ columns, addTask, deleteTask, editTask, onColumn
       return;
     }
 
-    // 🟩 Drag between different columns
+    // Drag between different columns
     const startTasks = Array.from(startCol.tasks);
     const [movedTask] = startTasks.splice(source.index, 1);
     const endTasks = Array.from(endCol.tasks);

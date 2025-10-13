@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Board from "./components/Board";
 import "./App.css";
 
+
 export default function App() {
   const [columns, setColumns] = useState({
     todo: {
@@ -15,9 +16,14 @@ export default function App() {
       name: "In Progress",
       tasks: [{ id: 3, title: "Write documentation", desc: "Update README and wiki" }],
     },
+    review: {
+      name: "In Review",
+      tasks: [{ id: 4, title: "Review the Codes", desc: "Checking the code review" }],
+    },
+
     done: {
       name: "Done",
-      tasks: [{ id: 4, title: "Deploy to Netlify", desc: "Live now 🎉" }],
+      tasks: [{ id: 5, title: "Deploy to Netlify", desc: "Live now 🎉" }],
     },
   });
 
@@ -84,14 +90,6 @@ export default function App() {
             Streamline your daily workflow — inspired by Huly, built by Vikram
           </p>
         </div>
-
-        {/* Theme Toggle */}
-        <button
-          onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-          className="px-4 py-2 rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
-        >
-          {theme === "dark" ? "🌙" : "☀️"}
-        </button>
       </header>
 
       {/* Main Content */}
@@ -104,6 +102,8 @@ export default function App() {
             deleteTask={deleteTask}
             editTask={editTask}
             onColumnsChange={moveTask}
+            theme={theme}
+            setTheme={setTheme}
           />
         </main>
       </div>

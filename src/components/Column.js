@@ -8,20 +8,25 @@ export default function Column({ colId, column, addTask, deleteTask, editTask })
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-4 w-72 flex-shrink-0 flex flex-col transition">
+      {/* Header */}
       <h2 className="font-semibold text-lg mb-3 flex justify-between items-center">
         {column.name}
         <span className="text-sm text-gray-400">{column.tasks.length}</span>
       </h2>
 
+      {/* Task area */}
       <Droppable droppableId={colId}>
         {(provided) => (
           <div
             ref={provided.innerRef}
             {...provided.droppableProps}
-            className={`space-y-3 ${
-              shouldScroll ? "overflow-y-auto" : ""
-            } flex-1 min-h-[200px] pr-1`}
-            style={{ maxHeight: shouldScroll ? "320px" : "auto" }}
+            className={`space-y-3 custom-scroll ${
+              shouldScroll ? "overflow-y-auto" : "overflow-y-hidden"
+            }`}
+            style={{
+              height: "360px", // equal height for all columns
+              paddingRight: shouldScroll ? "4px" : "0",
+            }}
           >
             {column.tasks.map((task, index) => (
               <Task
@@ -38,6 +43,7 @@ export default function Column({ colId, column, addTask, deleteTask, editTask })
         )}
       </Droppable>
 
+      {/* Add Task Button */}
       <div className="mt-3">
         <AddTask colId={colId} addTask={addTask} />
       </div>

@@ -1,25 +1,28 @@
 import { Draggable } from "@hello-pangea/dnd";
+import { XCircle } from "lucide-react";
 
-export default function Task({ task, index, colId, deleteTask }) {
+export default function Task({ task, colId, index, deleteTask, borderColor, shadowClass }) {
   return (
-    <Draggable draggableId={String(task.id)} index={index}>
+    <Draggable draggableId={task.id.toString()} index={index}>
       {(provided) => (
         <div
+          ref={provided.innerRef}
           {...provided.draggableProps}
           {...provided.dragHandleProps}
-          ref={provided.innerRef}
-          className="bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600 rounded-lg p-3 shadow-sm hover:shadow-md transition cursor-grab"
+          className={`p-3 bg-gray-100 dark:bg-gray-700 rounded-lg border-l-4 ${borderColor} transform transition-all duration-200 ease-out ${shadowClass} hover:-translate-y-1`}
         >
-          <div className="flex justify-between items-center mb-1">
-            <h3 className="font-medium text-sm">{task.title}</h3>
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="font-medium">{task.title}</p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">{task.desc}</p>
+            </div>
             <button
               onClick={() => deleteTask(colId, task.id)}
-              className="text-red-500 text-xs font-bold hover:text-red-700"
+              className="text-red-400 hover:text-red-500"
             >
-              ✕
+              <XCircle size={18} />
             </button>
           </div>
-          <p className="text-xs text-gray-500 dark:text-gray-400">{task.desc}</p>
         </div>
       )}
     </Draggable>

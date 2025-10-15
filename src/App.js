@@ -29,6 +29,7 @@ export default function App() {
 
   // Dark mode setup
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
+  const [viewMode, setViewMode] = useState("board"); 
 
   useEffect(() => {
     if (theme === "dark") {
@@ -98,12 +99,15 @@ export default function App() {
         <main className="flex-1">
           <Board
             columns={columns}
+            setColumns={setColumns} 
             addTask={addTask}
             deleteTask={deleteTask}
             editTask={editTask}
             onColumnsChange={moveTask}
             theme={theme}
             setTheme={setTheme}
+            viewMode={viewMode}         
+            setViewMode={setViewMode} 
           />
         </main>
       </div>

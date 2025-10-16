@@ -17,17 +17,6 @@ A small React.js project demonstrating drag-and-drop task management functionali
 - Tailwind CSS
 - @hello-pangea/dnd (Drag and Drop)
 
-## 🧭 Folder Structure
-src/
-├── App.js
-├── components/
-│ ├── Board.js
-│ ├── Column.js
-│ ├── Task.js
-│ └── AddTaskModal.js
-├── index.js
-└── styles.css
-
 ## 💡 Future Enhancements
 - Backend data persistence (Firebase / API)
 - User authentication
